@@ -1,0 +1,171 @@
+<!-- views/activities/list.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MeetX - Activities</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .logo-text {
+      font-weight: 800;
+      background: linear-gradient(90deg, #3366ff 0%, #5f3dc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .activity-card { transition: transform 0.3s ease; }
+    .activity-card:hover { transform: translateY(-5px); }
+    .type-badge.sports      { background: #c6f6d5; color: #22543d; }
+    .type-badge.movies      { background: #feebc8; color: #7b341e; }
+    .type-badge.food        { background: #fed7d7; color: #822727; }
+    .type-badge.culture     { background: #e9d8fd; color: #553c9a; }
+    .type-badge.education   { background: #bee3f8; color: #2a4365; }
+    .type-badge.outdoor     { background: #c6f6d5; color: #22543d; }
+    .type-badge.technology  { background: #e2e8f0; color: #1a202c; }
+    .type-badge.music       { background: #fed7e2; color: #702459; }
+    .type-badge.other       { background: #e2e8f0; color: #1a202c; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 shadow-lg">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between">
+          <div class="flex space-x-4">
+            <a href="/" class="flex items-center py-5 px-2 text-white">
+              <span class="logo-text text-2xl">Meet<span class="text-purple-300">X</span></span>
+            </a>
+            <div class="hidden md:flex items-center space-x-1">
+              <a href="/activities" class="py-5 px-3 text-white font-medium border-b-2 border-white">Activities</a>
+              <a href="/bookings" class="py-5 px-3 text-indigo-200 hover:text-white">My Bookings</a>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="#" class="hidden md:flex items-center text-indigo-200 hover:text-white">
+              <i class="fas fa-bell text-lg mr-1"></i>
+            </a>
+            <img src="/images/user.jpg" alt="Profile" class="w-9 h-9 rounded-full border-2 border-white" />
+            <a href="/auth/logout" class="py-2 px-4 bg-white text-indigo-600 font-medium rounded hover:bg-gray-100">Logout</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- Filter -->
+      <form method="GET" action="/activities" class="bg-white shadow-md rounded-lg p-6 mb-8 space-y-4 md:space-y-0 md:flex md:space-x-4">
+        <div class="relative flex-grow">
+          <input type="text" name="search" value="<%= query?.search || '' %>" placeholder="Search activities..." class="pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-indigo-500"/>
+          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+        <select name="type" class="w-full md:w-48 py-2 pl-4 pr-10 border rounded-md focus:ring-2 focus:ring-indigo-500 appearance-none">
+          <option value="">All Types</option>
+          <% activityTypes.forEach(type => { %>
+            <% if (type) { %>
+              <option value="<%= type %>" <%= query?.type === type ? 'selected' : '' %>>
+                <%= type.charAt(0).toUpperCase() + type.slice(1) %>
+              </option>
+            <% } %>
+          <% }) %>
+        </select>
+        <input type="date" name="date" value="<%= query?.date || '' %>" class="w-full md:w-48 py-2 px-4 border rounded-md focus:ring-2 focus:ring-indigo-500" />
+        <input type="text" name="location" value="<%= query?.location || '' %>" placeholder="Location" class="w-full md:w-48 py-2 px-4 border rounded-md focus:ring-2 focus:ring-indigo-500" />
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-md">Filter</button>
+      </form>
+
+      <!-- Activity Grid -->
+      <h2 class="text-2xl font-bold mb-6 text-gray-800">Available Activities</h2>
+      <% if (activities && activities.length > 0) { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% activities.forEach(activity => { %>
+            <div class="activity-card bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden">
+              <div class="relative">
+                <img src="<%= activity.image %>" alt="<%= activity.title %>" class="w-full h-48 object-cover"/>
+                <span class="absolute top-4 right-4 px-2 py-1 rounded text-xs font-medium type-badge <%= activity.type || 'other' %>">
+                    <%= (activity.type ? activity.type.charAt(0).toUpperCase() + activity.type.slice(1) : 'Other') %>
+                  </span>
+                  
+              </div>
+              <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2"><%= activity.title %></h3>
+                <p class="text-gray-600 text-sm mb-4">
+                    <%= activity.description && activity.description.length > 120 ? activity.description.substring(0, 120) + '...' : activity.description || 'No description available' %>
+                  </p>
+                  
+                <div class="text-sm text-gray-500 space-y-1 mb-4">
+                  <div><i class="fas fa-map-marker-alt text-indigo-500 w-5 inline-block"></i> <%= activity.location %></div>
+                  <div><i class="fas fa-calendar-alt text-indigo-500 w-5 inline-block"></i> <%= activity.formattedDate %></div>
+                  <div><i class="fas fa-clock text-indigo-500 w-5 inline-block"></i> <%= activity.time %> (<%= activity.duration %>)</div>
+                  <% if (activity.capacity) { %>
+                    <div>
+                      <i class="fas fa-users text-indigo-500 w-5 inline-block"></i>
+                      <% const left = activity.capacity - activity.bookedCount; %>
+                      <%= left %> <%= left === 1 ? 'space' : 'spaces' %> left
+                    </div>
+                  <% } %>
+                </div>
+                <div class="flex justify-between items-center">
+                  <a href="/activities/<%= activity._id %>" class="text-indigo-600 hover:text-indigo-800 font-medium">View Details</a>
+                  <form method="POST" action="/bookings/<%= activity._id %>">
+                    <button type="submit" class="px-5 py-2 rounded-md font-medium text-white transition duration-300 bg-indigo-600 hover:bg-indigo-700 <%= activity.isFull ? 'opacity-50 cursor-not-allowed' : '' %>" <%= activity.isFull ? 'disabled' : '' %>>
+                      <%= activity.isFull ? 'Full' : 'Book Now' %>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+          <div class="flex justify-center mt-8">
+            <nav class="inline-flex rounded-md shadow">
+              <% const buildQuery = (page) => {
+                const params = new URLSearchParams(query || {});
+                params.set("page", page);
+                return params.toString();
+              }; %>
+              <% if (currentPage > 1) { %>
+                <a href="/activities?<%= buildQuery(currentPage - 1) %>" class="px-3 py-2 border rounded-l-md text-sm bg-white text-gray-500 hover:bg-gray-50">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              <% } else { %>
+                <span class="px-3 py-2 border rounded-l-md text-sm bg-gray-100 text-gray-400">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+              <% } %>
+              <% 
+                let start = Math.max(1, currentPage - 2);
+                let end = Math.min(totalPages, start + 4);
+                if (end - start < 4) start = Math.max(1, end - 4);
+                for (let i = start; i <= end; i++) {
+              %>
+                <a href="/activities?<%= buildQuery(i) %>" class="px-3 py-2 border text-sm <%= i === currentPage ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50' %>">
+                  <%= i %>
+                </a>
+              <% } %>
+              <% if (currentPage < totalPages) { %>
+                <a href="/activities?<%= buildQuery(currentPage + 1) %>" class="px-3 py-2 border rounded-r-md text-sm bg-white text-gray-500 hover:bg-gray-50">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              <% } else { %>
+                <span class="px-3 py-2 border rounded-r-md text-sm bg-gray-100 text-gray-400">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              <% } %>
+            </nav>
+          </div>
+        <% } %>
+      <% } else { %>
+        <p class="text-gray-600 text-center mt-8">No activities found.</p>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

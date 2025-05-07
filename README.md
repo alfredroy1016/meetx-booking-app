@@ -1,42 +1,26 @@
-  MeetX Activity Booking App
+MeetX Activity Booking App
 
-A simple web application for activity booking, developed as a backend assignment using Node.js, Express.js, MongoDB, JWT, and EJS.
+A simple web app for activity booking developed using Node.js, Express.js, MongoDB, JWT, and EJS.
 
+ Features
+User Authentication: Register and login with JWT.
 
-Features
-. User Registration & Login (with JWT authentication)
+Protected Routes: Access booking features only when logged in.
 
-. Protected Routes via Middleware
+Activity Listing: View available activities with details.
 
-. List Activities
+Book & View Bookings: Book activities and view your bookings.
 
-.Book Activities
-
-.View Your Bookings
-
-. EJS-Based Dynamic Pages
+ Technologies
+express, mongoose, ejs, bcryptjs, jsonwebtoken, dotenv, cookie-parser
 
 
-
- Dependencies
-.express
-
-.mongoose
-
-.ejs
-
-.bcryptjs
-
-.jsonwebtoken
-
-.dotenv
-
-.cookie-parser
-
-
-
-Postman collection: meetx-api.postman_collection.json
-
-GitHub repository: [Link here]
-
-Deployed URL (if hosted): [Optional link]
+Screenshots
+Register page
+![alt text](image-2.png)
+Login Page
+![alt text](image-3.png)
+Activity Listing
+![alt text](image-1.png)
+Bookings Overview
+![alt text](image.png)
